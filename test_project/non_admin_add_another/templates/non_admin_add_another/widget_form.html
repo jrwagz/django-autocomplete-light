@@ -14,5 +14,20 @@
         <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet" media="screen">
         <script src="{{ STATIC_URL }}jquery.js" type="text/javascript"></script>
         {% include 'autocomplete_light/static.html' %}
+        <script>
+            /*
+             HACK WORKAROUND FOR django-autocomplete-light & django-cripy-forms incompatibility
+             django-crispy-forms uses relative positioning while django-autocomplete-light uses absolute
+             the crispy-forms positioning is winning we we will override the django-autocomplete-light fixPosition function
+             to just place the top and left positions to 0 see https://github.com/yourlabs/django-autocomplete-light/issues/253
+             */
+            yourlabs.Autocomplete.prototype.fixPosition = function(html) {
+                this.input.parents().filter(function() {
+                    return $(this).css('overflow') === 'hidden';
+                }).first().css('overflow', 'visible');
+                                        
+                this.box.insertAfter(this.input).css({top: 0, left: 0});
+            };
+        </script>
     </body>
 </html>
